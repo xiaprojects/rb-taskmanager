@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#000000">
+    <title></title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            width: 100%;
+            height: 100%;
+            background-color: #000000;
+            overflow: hidden;
+        }
+
+        .app {
+            min-height: 100vh;
+            min-height: 100dvh;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            place-items: center;
+
+        }
+
+        .button {
+            padding: 1rem;
+            min-height: 96px;
+            min-width: 72px;
+            width: 90%;
+            height: 80%;
+            border: 1px solid #acacac;
+            border-radius: 12px;
+            background: linear-gradient(#000000, #000000, #333333, #121212);
+            container-type: inline-size;
+            display: grid;
+            place-items: center;
+            color: #ffffff;
+        }
+
+        .selected {
+            background: linear-gradient(#888888, #888888, #afafff, #9999ff);
+        }
+
+        .buttonTitle {
+            font-size: 40cqmin;
+        }
+
+        .buttonLight {
+            height: 5cqh;
+            width: 60cqw;
+            border: 1px solid #acacac;
+            border-radius: 1cqh;
+            background: #7f7f7f;
+        }
+
+        .greenLight {
+            background: #00ff00;
+        }
+
+        .yellowLight {
+            background: #ffff00;
+        }
+        .redLight {
+            background: #ff0000;
+        }
+    </style>
+</head>
+
+<body>
+    <script>
+        async function fetchUrl(URL) {
+            try {
+                const response = await fetch(URL);
+                const data = await response.json();
+                console.log(data);
+                return data;
+            } catch (error) {
+                console.error('Error fetching URL: ' + URL, error);
+                
+            }
+            return null;
+        }
+
+        function sendSelectApp(item, button) {
+            // Remove .selected from all buttons
+            document.querySelectorAll('.button').forEach(btn => btn.classList.remove('selected'));
+            // Add .selected to clicked button
+            if (button) button.classList.add('selected');
+            
+            switch (item) {
+                case "OFF":
+                    fetchUrl("/api/shutdown")
+                    break;
+                case "RBT":
+                    fetchUrl("/api/reboot")
+                    break;
+                default:
+                    fetchUrl("/api/mode/"+item)
+                    break;
+            }
+            window.setTimeout(()=>{
+            document.querySelectorAll('.button').forEach(btn => btn.classList.remove('selected'));
+            },250);
+        }
+    </script>
+    <div class="app">
+        <button class="button" onclick="sendSelectApp('0', this);">
+            <span class="buttonTitle">NAV</span>
+            <span class="buttonLight"></span>
+        </button>
+        <button class="button" onclick="sendSelectApp('1', this);">
+            <span class="buttonTitle">PNL</span>
+            <span class="buttonLight greenLight"></span>
+        </button>
+        <button class="button" onclick="sendSelectApp('2', this);">
+            <span class="buttonTitle">RDO</span>
+            <span class="buttonLight"></span>
+        </button>
+        <button class="button" onclick="sendSelectApp('OFF', this);">
+            <span class="buttonTitle">OFF</span>
+            <span class="buttonLight redLight"></span>
+        </button>
+        <button class="button" onclick="sendSelectApp('RBT', this);">
+            <span class="buttonTitle">RBT</span>
+            <span class="buttonLight yellowLight"></span>
+        </button>
+    </div>
+</body>
+
+</html>

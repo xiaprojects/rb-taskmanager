@@ -1,0 +1,14 @@
+[Unit]
+Description=RB-TaskManager Server
+After=wayfire.service
+
+[Service]
+WorkingDirectory=/opt/rb-taskmanager
+ExecStart=/opt/rb-taskmanager/bin/rb-taskmanager-onlyserver --api-port 8180 --api-bind 0.0.0.0 --download-root /opt/rb-taskmanager/www
+KillMode=process
+Restart=always
+User=pi
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
