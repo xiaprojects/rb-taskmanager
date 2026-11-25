@@ -1,0 +1,15 @@
+#!/bin/sh
+set -e
+if [ "$1" = "configure" ]; then
+    if ! id pi >/dev/null 2>&1; then
+        echo "rb-taskmanager-onlyserver: WARNING: user 'pi' does not exist; the service runs as User=pi." >&2
+        echo "  Override with: systemctl edit rb-taskmanager.service  ([Service] User=<name>)" >&2
+    fi
+    echo "rb-taskmanager-onlyserver: shutdown/reboot need passwordless sudo for halt and reboot." >&2
+    if [ -d /run/systemd/system ]; then
+        systemctl daemon-reload
+        systemctl enable rb-taskmanager.service
+        systemctl restart rb-taskmanager.service || true
+    fi
+fi
+exit 0

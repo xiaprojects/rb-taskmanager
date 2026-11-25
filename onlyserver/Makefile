@@ -1,47 +1,41 @@
-CXX := g++
-CXXFLAGS := -std=c++17 -Wall -Wextra
+# SPDX-License-Identifier: GPL-3.0-only OR LicenseRef-RB-Commercial
+# onlyserver: HTTP server for Waydroid <-> host interaction (no GTK, no Wayfire).
 
-PKG_CONFIG := pkg-config
+CXX      ?= g++
+CXXFLAGS ?= -O2 -g
+override CXXFLAGS += -std=c++17 -Wall -Wextra
+LDLIBS   += -lpthread
 
-GTK3_CFLAGS := $(shell $(PKG_CONFIG) --cflags gtk+-3.0)
-GTK3_LIBS := $(shell $(PKG_CONFIG) --libs gtk+-3.0)
+PREFIX      ?= /opt/rb-taskmanager
+SYSTEMD_DIR ?= /usr/lib/systemd/system
+DESTDIR     ?=
 
-GTK_LAYER_SHELL_CFLAGS := $(shell $(PKG_CONFIG) --cflags gtk-layer-shell-0)
-GTK_LAYER_SHELL_LIBS := $(shell $(PKG_CONFIG) --libs gtk-layer-shell-0)
-
-CXXFLAGS += $(GTK3_CFLAGS) $(GTK_LAYER_SHELL_CFLAGS)
-LDFLAGS := $(GTK3_LIBS) $(GTK_LAYER_SHELL_LIBS) -lpthread
-
-TARGET := rb-taskmanager
-SRCS := main.cpp wayfire_ipc.cpp
-OBJS := $(SRCS:.cpp=.o)
+TARGET := rb-taskmanager-onlyserver
+SRCS   := rb-taskmanager-onlyserver.cpp ../common/rb_http.cpp
+HDRS   := ../common/rb_http.hpp
 
 all: $(TARGET)
 
-$(TARGET): $(OBJS)
-	$(CXX) $(OBJS) -o $@ $(LDFLAGS)
+$(TARGET): $(SRCS) $(HDRS)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(SRCS) -o $@ $(LDFLAGS) $(LDLIBS)
 
-%.o: %.cpp
-	$(CXX) $(CXXFLAGS) -c $< -o $@
+# Staged/packaging install: touches only $(DESTDIR), no systemctl.
+install: $(TARGET)
+	install -d $(DESTDIR)$(PREFIX)/bin $(DESTDIR)$(PREFIX)/www $(DESTDIR)$(SYSTEMD_DIR)
+	install -m 0755 -s $(TARGET) $(DESTDIR)$(PREFIX)/bin/
+	install -m 0755 shutdown.sh mode.sh $(DESTDIR)$(PREFIX)/bin/
+	install -m 0644 www/* $(DESTDIR)$(PREFIX)/www/
+	install -m 0644 rb-taskmanager.service $(DESTDIR)$(SYSTEMD_DIR)/
 
-rb-taskmanager-onlyserver:
-	g++ rb-taskmanager-onlyserver.cpp -o rb-taskmanager-onlyserver
-
-install-onlyserver: rb-taskmanager-onlyserver
-	mkdir -p /opt/rb-taskmanager/bin
-	cp -R www /opt/rb-taskmanager
-	cp rb-taskmanager-onlyserver /opt/rb-taskmanager/bin
-	cp shutdown.sh /opt/rb-taskmanager/bin
-	chmod a+x /opt/rb-taskmanager/bin/shutdown.sh	
-	cp rb-taskmanager.service /lib/systemd/system
+# Direct install on this machine (needs root). Prefer the .deb: `make deb-onlyserver` at repo root.
+install-onlyserver: install
 	systemctl daemon-reload
 	systemctl enable rb-taskmanager.service
 
 clean:
-	rm -f $(OBJS) $(TARGET)
+	rm -f $(TARGET)
 
 dependencies:
-	apt install -y libgtk-3-dev
+	apt install -y g++ make
 
-
-.PHONY: all clean deb
+.PHONY: all install install-onlyserver clean dependencies

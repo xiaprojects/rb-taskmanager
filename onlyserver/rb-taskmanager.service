@@ -4,7 +4,8 @@ After=wayfire.service
 
 [Service]
 WorkingDirectory=/opt/rb-taskmanager
-ExecStart=/opt/rb-taskmanager/bin/rb-taskmanager-onlyserver --api-port 8180 --api-bind 0.0.0.0 --download-root /opt/rb-taskmanager/www
+EnvironmentFile=-/etc/default/rb-taskmanager
+ExecStart=/opt/rb-taskmanager/bin/rb-taskmanager-onlyserver --api-port 8180 --api-bind 0.0.0.0 --download-root /opt/rb-taskmanager/www --mode-cmd /opt/rb-taskmanager/bin/mode.sh
 KillMode=process
 Restart=always
 User=pi

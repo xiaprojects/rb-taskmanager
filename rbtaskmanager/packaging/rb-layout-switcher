@@ -1,0 +1,36 @@
+#!/bin/sh
+# SPDX-License-Identifier: GPL-3.0-only OR LicenseRef-RB-Commercial
+# Starts wayfire-layout-switcher with the settings in /etc/rb-taskmanager/layout-switcher.conf.
+# Must run INSIDE the Wayfire session (needs WAYLAND_DISPLAY and WAYFIRE_SOCKET), e.g. from
+# wayfire.ini:
+#   [autostart]
+#   rb_switcher = /opt/rb-taskmanager/bin/rb-layout-switcher
+# Extra arguments are appended (later ones win).
+
+CONF="${RB_SWITCHER_CONF:-/etc/rb-taskmanager/layout-switcher.conf}"
+[ -r "$CONF" ] && . "$CONF"
+
+if [ -z "$WAYFIRE_SOCKET" ] || [ -z "$WAYLAND_DISPLAY" ]; then
+    echo "rb-layout-switcher: WAYFIRE_SOCKET/WAYLAND_DISPLAY not set; start it from the Wayfire session" >&2
+    exit 1
+fi
+
+exec /opt/rb-taskmanager/bin/wayfire-layout-switcher \
+    --label-a "${LABEL_A:-A}" --label-b "${LABEL_B:-B}" \
+    --label-c "${LABEL_C:-C}" --label-combi "${LABEL_COMBI:-S}" \
+    --button-x "${BUTTON_X:-10}" --button-y "${BUTTON_Y:-10}" \
+    --button-w "${BUTTON_W:-48}" --button-h "${BUTTON_H:-32}" \
+    --app-a-id "$APP_A_ID" --app-a-title "$APP_A_TITLE" --app-a-cmd "$APP_A_CMD" \
+    --app-b-id "$APP_B_ID" --app-b-title "$APP_B_TITLE" --app-b-cmd "$APP_B_CMD" \
+    --app-c-id "$APP_C_ID" --app-c-title "$APP_C_TITLE" --app-c-cmd "$APP_C_CMD" \
+    --launch-timeout "${LAUNCH_TIMEOUT:-20}" \
+    --shutdown-cmd "${SHUTDOWN_CMD:-/opt/rb-taskmanager/bin/shutdown.sh}" \
+    --reboot-cmd "${REBOOT_CMD:-/usr/bin/sudo /usr/sbin/reboot}" \
+    --verbose "${VERBOSE:-0}" \
+    --split-x "${SPLIT_X:-600}" \
+    --hidden "${HIDDEN:-0}" \
+    --enable-combi "${ENABLE_COMBI:-1}" \
+    --download-root "${DOWNLOAD_ROOT:-/opt/rb-taskmanager/switcher-www}" \
+    --api-bind "${API_BIND:-127.0.0.1}" \
+    --api-port "${API_PORT:-8080}" \
+    "$@"

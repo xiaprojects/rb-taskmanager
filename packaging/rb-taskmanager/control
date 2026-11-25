@@ -1,0 +1,19 @@
+Package: rb-taskmanager
+Version: @VERSION@
+Architecture: @ARCH@
+Maintainer: xiaprojects <xiaprojects@users.noreply.github.com>
+Installed-Size: @SIZE@
+Section: x11
+Priority: optional
+Depends: @SHLIBS@
+Recommends: wayfire, waydroid, chromium | chromium-browser, curl, rb-taskmanager-onlyserver
+Description: Wayfire layout switcher for Waydroid and RB-01 screens
+ GTK3 / gtk-layer-shell overlay button for Wayland + Wayfire that cycles the
+ visible layout: app A, B or C full screen, or A|B side by side. Windows are
+ found by Wayland app-id and/or title through Wayfire IPC; missing apps are
+ started and placed as soon as their window appears. Also exposes
+ /api/mode/N on localhost.
+ .
+ Start it from the Wayfire session ([autostart] in wayfire.ini):
+   /opt/rb-taskmanager/bin/rb-layout-switcher
+ Configure in /etc/rb-taskmanager/layout-switcher.conf.

@@ -1,0 +1,13 @@
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: rb-taskmanager
+Source: https://github.com/xiaprojects/rb-taskmanager
+
+Files: *
+Copyright: 2026 xiaprojects
+License: GPL-3.0-only or LicenseRef-RB-Commercial
+ This software is dual-licensed. You may use it under the terms of the
+ GNU General Public License version 3, or under a separate commercial
+ license obtained from the copyright holder.
+ .
+ On Debian systems, the full text of the GNU General Public License
+ version 3 can be found in /usr/share/common-licenses/GPL-3.

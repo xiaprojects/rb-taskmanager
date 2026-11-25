@@ -1,0 +1,16 @@
+Package: rb-taskmanager-onlyserver
+Version: @VERSION@
+Architecture: @ARCH@
+Maintainer: xiaprojects <xiaprojects@users.noreply.github.com>
+Installed-Size: @SIZE@
+Section: misc
+Priority: optional
+Depends: @SHLIBS@, curl, sudo
+Recommends: waydroid
+Suggests: rb-taskmanager
+Description: HTTP server letting Waydroid control the RB-06 host
+ Small HTTP server (systemd service, port 8180) that lets the Waydroid
+ Android VM control the Linux host: graceful shutdown (stops the Waydroid
+ session and RB-01 first) and reboot. Serves the touch button page from
+ /opt/rb-taskmanager/www and forwards /api/mode/N to the in-session layout
+ switcher (package rb-taskmanager).
